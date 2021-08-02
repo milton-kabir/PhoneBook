@@ -162,6 +162,13 @@ class Phones {
     }
     public Phones quickSearch(List<Phone> names){return quickSearch(names,defaultComparator);}
 
+    public void prepareMap(){
+        Map<String, Phone> index = new HashMap<>();
+        for(Phone phone :this.phones){
+            index.put(phone.getName(),phone);
+        }
+    }
+
 }
 class Phone{
     private final String name;
@@ -250,6 +257,26 @@ public class Main {
                 ,getTime(searchAndSortDuration)
         );
         System.out.printf("Sorting time: %s\n",getTime(sortDuration));
+        System.out.printf("Searching time: %s\n\n",getTime(searchDuration));
+
+
+        System.out.println("Start searching (hash table)...");
+        phones = Phones.loadPhones(Paths.get("C:\\Users\\drifter\\Downloads\\directory.txt"));
+        start=System.currentTimeMillis();
+        phones.prepareMap();
+        sortDuration = Duration.ofMillis(System.currentTimeMillis()-start);
+
+        start=System.currentTimeMillis();
+        filtered = phones.quickSearch(searchList);
+        searchDuration = Duration.ofMillis(System.currentTimeMillis()-start);
+        searchAndSortDuration = sortDuration.plus(searchDuration);
+
+        System.out.printf("Found %d / %d entries. Time taken:  %s\n"
+                ,filtered.size()
+                ,names.size()
+                ,getTime(searchAndSortDuration)
+        );
+        System.out.printf("Creating time: %s\n",getTime(sortDuration));
         System.out.printf("Searching time: %s\n\n",getTime(searchDuration));
     }
 }
